@@ -2,7 +2,8 @@ import { User } from "../models/models.user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendCookie } from "../utils/features.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 export const getAllUsers = async (req, res) => {};
 
 export const login = async (req, res) => {
@@ -47,14 +48,19 @@ export const register = async (req, res) => {
   sendCookie(user, res, "Registered Succesfully", 201);
 };
 
-export const getMyProfile = async (req, res) => {
-  const id = "myid";
-
-  const { token } = req.cookies;
-
-  const user = await User.findById(id);
+export const getMyProfile = (req, res) => {
   res.status(200).json({
     success: true,
-    user,
+    user: req.user,
   });
+};
+
+export const logout = (req, res) => {
+  res
+    .status(200)
+    .cookie("token", "", { expires: new Date(Date.now) })
+    .json({
+      success: true,
+      user: req.user,
+    });
 };
