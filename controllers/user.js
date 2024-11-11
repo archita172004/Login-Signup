@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendCookie } from "../utils/features.js";
 import dotenv from "dotenv";
+import ErrorHandler from "../middlewares/error.js";
 dotenv.config();
 export const getAllUsers = async (req, res) => {};
 
@@ -10,13 +11,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select("+password");
-
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "User Doesn't exist",
-    });
-  }
+  if (!user) return next(new ErrorHandler("Invalid Email or Password", 400));
 
   const isMatch = await bcrypt.compare(password, user.password);
 
@@ -35,11 +30,7 @@ export const register = async (req, res) => {
 
   let user = await User.findOne({ email });
 
-  if (user)
-    return res.status(404).json({
-      success: false,
-      message: "User already exist",
-    });
+  if (user) return next(new ErrorHandler("User Already Exists"));
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
