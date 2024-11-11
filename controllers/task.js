@@ -1,57 +1,73 @@
 import ErrorHandler from "../middlewares/error.js";
 import { Task } from "../models/models.task.js";
+
 export const newTask = async (req, res, next) => {
-  const { title, description } = req.body;
+  try {
+    const { title, description } = req.body;
 
-  await Task.create({
-    title,
-    description,
-    user: req.user,
-  });
+    await Task.create({
+      title,
+      description,
+      user: req.user,
+    });
 
-  res.status(201).json({
-    success: true,
-    message: "Task Added",
-  });
+    res.status(201).json({
+      success: true,
+      message: "Task Added",
+    });
+  } catch (error) {
+    next(error());
+  }
 };
-
 export const getMyTask = async (req, res, next) => {
-  const userid = req.user._id;
+  try {
+    const userid = req.user._id;
 
-  const tasks = await Task.find({ user: userid });
+    const tasks = await Task.find({ user: userid });
 
-  res.status(200).json({
-    success: true,
-    tasks,
-  });
+    res.status(200).json({
+      success: true,
+      tasks,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateTask = async (req, res, next) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const task = await Task.findById(id);
+    const task = await Task.findById(id);
 
-  if (!task) return next(new ErrorHandler());
+    if (!task) return next(new ErrorHandler());
 
-  task.isCompleted = !task.isCompleted;
+    task.isCompleted = !task.isCompleted;
 
-  await task.save();
+    await task.save();
 
-  res.status(200).json({
-    success: true,
-    message: "task Updated",
-  });
+    res.status(200).json({
+      success: true,
+      message: "task Updated",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteTask = async (req, res, next) => {
-  const task = await Task.findById(req.params.id);
+  try {
+    const task = await Task.findById(req.params.id);
 
-  if (!task) return next(new ErrorHandler("Task not found", 404));
+    if (!task) return next(new ErrorHandler("Task not found", 404));
 
-  await task.deleteOne();
+    await task.deleteOne();
 
-  res.status(200).json({
-    success: true,
-    message: "task deleted",
-  });
+    res.status(200).json({
+      success: true,
+      message: "task deleted",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
