@@ -1,5 +1,7 @@
 import ErrorHandler from "../middlewares/error.js";
 import { Task } from "../models/models.task.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const newTask = async (req, res, next) => {
   try {

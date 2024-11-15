@@ -8,6 +8,9 @@ import taskRouter from "./routes/task.js";
 import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./middlewares/error.js";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
+
 export const app = express();
 
 // using middleware
